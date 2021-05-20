@@ -1,9 +1,13 @@
+#include "BatchRenderer.h"
+#include "Entity.h"
+#include "EntityRenderer.h"
 #include "ShaderProgram.h"
 #include "SquareModel.h"
 #include "TextureAtlas.h"
 #include "WindowCallbacks.h"
 #include "Debug.h"
 
+#include <cstddef>
 #include <iostream>
 
 #define GLFW_INCLUDE_NONE
@@ -43,7 +47,6 @@ void main() {
 }
 )";
 
-
 int main(int argc, char* argv[]) {
     const std::string_view programName(argv[0]);
     const std::string currentDirectory(programName.substr(0, programName.find_last_of('/')));
@@ -73,19 +76,24 @@ int main(int argc, char* argv[]) {
     textureAtlas.stitch();
     textureAtlas.bind();
 
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
+    BatchRenderer batchRenderer{};
 
-    SquareModel squareModel(textureAtlas, currentDirectory + "/c.png");
+    Entity entity;
+    Entity entity2;
+    entity2.x = 0.2f;
+    EntityRenderer entityRenderer(textureAtlas, currentDirectory);
 
     while (!glfwWindowShouldClose(window)) {
         glClear(gl::ClearBufferMask::GL_COLOR_BUFFER_BIT);
+        entity.y += 0.1f / 60.0f;
 
         shaderProgram.bind();
-        squareModel.bind();
-        squareModel.draw();
+        batchRenderer.reset();
 
+        entityRenderer.render(batchRenderer, entity);
+        entityRenderer.render(batchRenderer, entity2);
+
+        batchRenderer.flush();
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
