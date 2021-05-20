@@ -1,0 +1,8 @@
+.cache/
+Debug/
+Release/
+compile_commands.json
+*.tar.gz
+*.tar.zst
+Packaging/pkg/
+Packaging/src/
