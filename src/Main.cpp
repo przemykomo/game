@@ -1,11 +1,11 @@
 #include "BatchRenderer.h"
 #include "Entity.h"
 #include "EntityRenderer.h"
-#include "ShaderProgram.h"
 #include "SquareModel.h"
 #include "TextureAtlas.h"
 #include "WindowCallbacks.h"
 #include "Debug.h"
+#include "Shaders.h"
 
 #include <cstddef>
 #include <iostream>
@@ -20,32 +20,6 @@
 #include <GLFW/glfw3.h>
 
 using namespace gl;
-
-const char* vertexShaderSource = R"(
-#version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec2 aTexCoord;
-
-out vec2 TexCoord;
-
-void main() {
-    gl_Position = vec4(aPos, 1.0);
-    TexCoord = aTexCoord;
-}
-)";
-
-const char* fragmentShaderSource = R"(
-#version 330 core
-out vec4 FragColor;
-
-in vec2 TexCoord;
-
-uniform sampler2D texture1;
-
-void main() {
-    FragColor = texture(texture1, TexCoord);
-}
-)";
 
 int main(int argc, char* argv[]) {
     const std::string_view programName(argv[0]);
@@ -67,8 +41,6 @@ int main(int argc, char* argv[]) {
 
     glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
 
-    ShaderProgram shaderProgram(vertexShaderSource, fragmentShaderSource);
-
     TextureAtlas textureAtlas{};
     textureAtlas.addTexture(currentDirectory + "/a.png");
     textureAtlas.addTexture(currentDirectory + "/b.png");
@@ -76,7 +48,7 @@ int main(int argc, char* argv[]) {
     textureAtlas.stitch();
     textureAtlas.bind();
 
-    BatchRenderer batchRenderer{};
+    BatchRenderer batchRenderer(vertexShaderSource, fragmentShaderSource);
 
     Entity entity;
     Entity entity2;
@@ -87,7 +59,7 @@ int main(int argc, char* argv[]) {
         glClear(gl::ClearBufferMask::GL_COLOR_BUFFER_BIT);
         entity.y += 0.1f / 60.0f;
 
-        shaderProgram.bind();
+        //shaderProgram.bind();
         batchRenderer.reset();
 
         entityRenderer.render(batchRenderer, entity);

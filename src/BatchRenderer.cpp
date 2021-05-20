@@ -1,9 +1,47 @@
 #include "BatchRenderer.h"
 #include <glbinding/gl/gl.h>
+#include <stdexcept>
 
 using namespace gl;
 
-BatchRenderer::BatchRenderer() {
+static unsigned int createShader(GLenum type, const char* source) {
+    unsigned int shader = glCreateShader(type);
+    glShaderSource(shader, 1, &source, NULL);
+    glCompileShader(shader);
+    // check for shader compile errors
+    int success;
+    char infoLog[512];
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(shader, 512, NULL, infoLog);
+        throw std::runtime_error(std::string("Cannot compile shader!\n") + infoLog);
+    }
+
+    return shader;
+}
+
+BatchRenderer::BatchRenderer(const char* vertexShaderSource, const char* fragmentShaderSource) {
+
+    unsigned int vertexShader = createShader(GL_VERTEX_SHADER, vertexShaderSource);
+    unsigned int fragmentShader = createShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+
+    programID = glCreateProgram();
+    glAttachShader(programID, vertexShader);
+    glAttachShader(programID, fragmentShader);
+    glLinkProgram(programID);
+
+    int success;
+    char infoLog[512];
+    glGetProgramiv(programID, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(programID, 512, NULL, infoLog);
+        throw std::runtime_error(std::string("Cannot link shader program!\n") + infoLog);
+    }
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
@@ -32,6 +70,7 @@ void BatchRenderer::addModel(Vertex *modelVertices, int verticesSize, unsigned i
     int pos = vertices.size();
     vertices.insert(vertices.end(), modelVertices, modelVertices + verticesSize);
 
+    indices.reserve(indices.size() + modelIndicesSize);
     for (int i = 0; i < modelIndicesSize; i++) {
         indices.push_back(modelIndices[i] + pos);
     }
@@ -50,5 +89,6 @@ void BatchRenderer::flush() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indices.size() * sizeof(unsigned int), indices.data());
 
+    glUseProgram(programID);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }
