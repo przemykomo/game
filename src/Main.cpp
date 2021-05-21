@@ -1,6 +1,7 @@
 #include "BatchRenderer.h"
 #include "Entity.h"
 #include "EntityRenderer.h"
+#include "PlayerController.h"
 #include "SquareModel.h"
 #include "TextureAtlas.h"
 #include "WindowCallbacks.h"
@@ -9,6 +10,7 @@
 
 #include <cstddef>
 #include <iostream>
+#include <memory>
 
 #define GLFW_INCLUDE_NONE
 #include <glbinding/gl/enum.h>
@@ -34,7 +36,7 @@ int main(int argc, char* argv[]) {
     glfwSwapInterval(1);
     
     glbinding::initialize(glfwGetProcAddress);
-#ifdef DEBUG
+#ifdef GL_DEBUG
         glbinding::setCallbackMask(glbinding::CallbackMask::After | glbinding::CallbackMask::ParametersAndReturnValue);
         glbinding::setAfterCallback(glCallback);
 #endif
@@ -50,20 +52,25 @@ int main(int argc, char* argv[]) {
 
     BatchRenderer batchRenderer(vertexShaderSource, fragmentShaderSource);
 
-    Entity entity;
-    Entity entity2;
-    entity2.x = 0.2f;
+    std::shared_ptr<Entity> entity = std::make_shared<Entity>();
+    std::shared_ptr<Entity> playerEntity = std::make_shared<Entity>();
+    PlayerController playerController(playerEntity);
+
+    playerEntity->x = 0.2f;
     EntityRenderer entityRenderer(textureAtlas, currentDirectory);
 
     while (!glfwWindowShouldClose(window)) {
-        glClear(gl::ClearBufferMask::GL_COLOR_BUFFER_BIT);
-        entity.y += 0.1f / 60.0f;
+        playerController.tick(window);
 
-        //shaderProgram.bind();
+        glClear(gl::ClearBufferMask::GL_COLOR_BUFFER_BIT);
+
+        entity->y -= 0.1f / 60.0f;
+        entity->y += 0.1f / 60.0f;
+
         batchRenderer.reset();
 
         entityRenderer.render(batchRenderer, entity);
-        entityRenderer.render(batchRenderer, entity2);
+        entityRenderer.render(batchRenderer, playerEntity);
 
         batchRenderer.flush();
         glfwSwapBuffers(window);

@@ -5,7 +5,7 @@
 
 using namespace gl;
 
-#ifdef DEBUG
+#ifdef GL_DEBUG
     void glCallback(const glbinding::FunctionCall& call) {
         if (std::string_view(call.function->name()).compare("glGetError")) {
             std::cout << call.function->name() << "(";

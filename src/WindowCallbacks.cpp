@@ -1,4 +1,6 @@
 #include "WindowCallbacks.h"
+#include "PlayerController.h"
+#include <GLFW/glfw3.h>
 
 using namespace gl;
 
@@ -8,8 +10,10 @@ void initCallbacks(GLFWwindow* window) {
 }
 
 void keyCallback(GLFWwindow *window, int key, int scanCode, int action, int mods) {
-    if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE) {
-        glfwSetWindowShouldClose(window, true);
+    if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+        if (key == GLFW_KEY_ESCAPE) {
+            glfwSetWindowShouldClose(window, true);
+        }
     }
 }
 
