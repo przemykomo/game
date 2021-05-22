@@ -2,9 +2,8 @@
 
 #include <glm/ext/vector_float2.hpp>
 #include <string>
-#include <string_view>
 #include <unordered_map>
-#include <unordered_set>
+#include <vector>
 
 struct TextureCoords {
     float left, bottom, right, top;
@@ -19,7 +18,7 @@ class TextureAtlas {
 
         std::unordered_map<std::string, glm::vec2> stitchedTextureMap;
 
-        std::unordered_set<std::string> fileNames;
+        std::vector<std::string> fileNames;
     public:
         TextureAtlas() noexcept;
         ~TextureAtlas();

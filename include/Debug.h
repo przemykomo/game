@@ -2,6 +2,6 @@
 
 #include <glbinding/FunctionCall.h>
 
-#ifdef DEBUG
+#ifdef GL_DEBUG
     void glCallback(const glbinding::FunctionCall& call);
 #endif

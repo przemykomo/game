@@ -22,7 +22,7 @@ static unsigned int createShader(GLenum type, const char* source) {
     return shader;
 }
 
-BatchRenderer::BatchRenderer(const char* vertexShaderSource, const char* fragmentShaderSource) {
+void BatchRenderer::init(const char* vertexShaderSource, const char* fragmentShaderSource) {
 
     unsigned int vertexShader = createShader(GL_VERTEX_SHADER, vertexShaderSource);
     unsigned int fragmentShader = createShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
@@ -62,6 +62,8 @@ BatchRenderer::BatchRenderer(const char* vertexShaderSource, const char* fragmen
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)offsetof(Vertex, texturePosition));
     glEnableVertexAttribArray(1);
 }
+
+BatchRenderer::BatchRenderer() {}
 
 void BatchRenderer::reset() {
     vertices.clear();

@@ -1,8 +1,4 @@
 #include "SquareModel.h"
-#include "TextureAtlas.h"
-#include <glbinding/gl/gl.h>
-
-using namespace gl;
 
 SquareModel::SquareModel(TextureCoords textureCoords) :
     vertices{

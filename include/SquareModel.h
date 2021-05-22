@@ -2,8 +2,6 @@
 
 #include "TextureAtlas.h"
 #include "Vertex.h"
-#include "BatchRenderer.h"
-#include <string>
 
 class SquareModel {
     public:

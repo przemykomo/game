@@ -3,13 +3,10 @@
 
 #include <cmath>
 #include <cstring>
-#include <iostream>
 #include <memory>
-#include <stdexcept>
 
 #include <glbinding/gl/enum.h>
 #include <glbinding/gl/functions.h>
-#include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_int2.hpp>
 
 using namespace gl;
@@ -23,7 +20,7 @@ TextureAtlas::~TextureAtlas() {
 }
 
 void TextureAtlas::addTexture(const std::string &fileName) {
-    fileNames.insert(fileName);
+    fileNames.push_back(fileName);
 }
 
 void TextureAtlas::stitch() {

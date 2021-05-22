@@ -9,8 +9,10 @@ class BatchRenderer {
         std::vector<Vertex> vertices;
         std::vector<unsigned int> indices;
 
+        friend class Game;
+        void init(const char* vertexShaderSource, const char* fragmentShaderSource);
     public:
-        BatchRenderer(const char* vertexShaderSource, const char* fragmentShaderSource);
+        BatchRenderer();
         void reset();
         void addModel(Vertex* modelVertices, int verticesSize, unsigned int* modelIndices, int modelIndicesSize);
         void flush();
