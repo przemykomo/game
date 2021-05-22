@@ -1,6 +1,6 @@
 #pragma once
 #include "BatchRenderer.h"
-#include "Entity.h"
+#include "entities/Entity.h"
 #include "SquareModel.h"
 #include "TextureAtlas.h"
 #include <memory>
@@ -10,5 +10,6 @@ class EntityRenderer {
         SquareModel model;
     public:
         EntityRenderer(TextureAtlas& textureAtlas, const std::string& currentDirectory);
+        EntityRenderer(SquareModel&& model);
         void render(BatchRenderer& batchRenderer, std::shared_ptr<Entity> entity);
 };

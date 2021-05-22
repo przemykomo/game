@@ -4,6 +4,8 @@
 
 using namespace gl;
 
+static constexpr int MAX_BUFFER_COUNT = 1024;
+
 static unsigned int createShader(GLenum type, const char* source) {
     unsigned int shader = glCreateShader(type);
     glShaderSource(shader, 1, &source, NULL);
@@ -49,10 +51,10 @@ BatchRenderer::BatchRenderer(const char* vertexShaderSource, const char* fragmen
     glGenBuffers(1, &EBO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 1000, nullptr, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * MAX_BUFFER_COUNT, nullptr, GL_DYNAMIC_DRAW);
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * 6000, nullptr, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * MAX_BUFFER_COUNT, nullptr, GL_DYNAMIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)offsetof(Vertex, position));
     glEnableVertexAttribArray(0);
@@ -67,6 +69,10 @@ void BatchRenderer::reset() {
 }
 
 void BatchRenderer::addModel(Vertex *modelVertices, int verticesSize, unsigned int *modelIndices, int modelIndicesSize) {
+    if (vertices.size() + verticesSize > MAX_BUFFER_COUNT || indices.size() + modelIndicesSize > MAX_BUFFER_COUNT) {
+        flush();
+    }
+
     int pos = vertices.size();
     vertices.insert(vertices.end(), modelVertices, modelVertices + verticesSize);
 
@@ -74,8 +80,6 @@ void BatchRenderer::addModel(Vertex *modelVertices, int verticesSize, unsigned i
     for (int i = 0; i < modelIndicesSize; i++) {
         indices.push_back(modelIndices[i] + pos);
     }
-
-    //TODO: flush if needed
 }
 
 void BatchRenderer::flush() {
@@ -91,4 +95,6 @@ void BatchRenderer::flush() {
 
     glUseProgram(programID);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+
+    reset();
 }

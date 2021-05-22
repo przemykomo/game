@@ -1,5 +1,5 @@
 #include "BatchRenderer.h"
-#include "Entity.h"
+#include "entities/Entity.h"
 #include "EntityRenderer.h"
 #include "PlayerController.h"
 #include "SquareModel.h"
@@ -7,6 +7,7 @@
 #include "WindowCallbacks.h"
 #include "Debug.h"
 #include "Shaders.h"
+#include "entities/PlayerEntity.h"
 
 #include <cstddef>
 #include <iostream>
@@ -53,28 +54,38 @@ int main(int argc, char* argv[]) {
     BatchRenderer batchRenderer(vertexShaderSource, fragmentShaderSource);
 
     std::shared_ptr<Entity> entity = std::make_shared<Entity>();
-    std::shared_ptr<Entity> playerEntity = std::make_shared<Entity>();
+    std::shared_ptr<PlayerEntity> playerEntity = std::make_shared<PlayerEntity>();
     PlayerController playerController(playerEntity);
 
     playerEntity->x = 0.2f;
     EntityRenderer entityRenderer(textureAtlas, currentDirectory);
+    EntityRenderer playerRenderer(SquareModel(textureAtlas.getTextureCoords(currentDirectory + "/a.png")));
+
+    double deltaTime = 1.0 / 60.0f;
+    double timeBegin = glfwGetTime();
 
     while (!glfwWindowShouldClose(window)) {
-        playerController.tick(window);
+        playerController.tick(window, deltaTime);
+
+        playerEntity->tick(deltaTime);
 
         glClear(gl::ClearBufferMask::GL_COLOR_BUFFER_BIT);
 
-        entity->y -= 0.1f / 60.0f;
-        entity->y += 0.1f / 60.0f;
+        //entity->y -= 0.1f / 60.0f;
+        //entity->y += 0.1f / 60.0f;
 
         batchRenderer.reset();
 
         entityRenderer.render(batchRenderer, entity);
-        entityRenderer.render(batchRenderer, playerEntity);
+        playerRenderer.render(batchRenderer, playerEntity);
 
         batchRenderer.flush();
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        double timeNow = glfwGetTime();
+        deltaTime = timeNow - timeBegin;
+        timeBegin = timeNow;
     }
 
     glfwTerminate();

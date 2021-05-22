@@ -1,21 +1,21 @@
 #include "PlayerController.h"
 
-PlayerController::PlayerController(const std::shared_ptr<Entity>& playerEntity) : playerEntity(playerEntity) {}
+PlayerController::PlayerController(const std::shared_ptr<PlayerEntity>& playerEntity) : playerEntity(playerEntity) {}
 
-void PlayerController::tick(GLFWwindow* window) {
+void PlayerController::tick(GLFWwindow* window, double deltaTime) {
     if (glfwGetKey(window, GLFW_KEY_A)) {
-            playerEntity->x -= 1.0f / 60.0f;
+        playerEntity->moveRight -= 0.2 * deltaTime;
     }
 
     if (glfwGetKey(window, GLFW_KEY_D)) {
-            playerEntity->x += 1.0f / 60.0f;
+        playerEntity->moveRight += 0.2 * deltaTime;
     }
 
     if (glfwGetKey(window, GLFW_KEY_S)) {
-            playerEntity->y -= 1.0f / 60.0f;
+        playerEntity->moveUp -= 0.2 * deltaTime;
     }
 
     if (glfwGetKey(window, GLFW_KEY_W)) {
-            playerEntity->y += 1.0f / 60.0f;
+        playerEntity->moveUp += 0.2 * deltaTime;
     }
 }

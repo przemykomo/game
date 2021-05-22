@@ -3,6 +3,7 @@
 #include <memory>
 
 EntityRenderer::EntityRenderer(TextureAtlas& textureAtlas, const std::string& currentDirectory) : model(textureAtlas.getTextureCoords(currentDirectory + "/c.png")) {}
+EntityRenderer::EntityRenderer(SquareModel&& model) : model(model) {}
 
 void EntityRenderer::render(BatchRenderer &batchRenderer, std::shared_ptr<Entity> entity) {
     constexpr int verticesSize = sizeof(model.vertices) / sizeof(Vertex);
