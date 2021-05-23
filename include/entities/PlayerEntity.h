@@ -6,5 +6,5 @@ class PlayerEntity : public Entity {
         float moveRight = 0.0f;
         float moveUp = 0.0f;
         PlayerEntity();
-        void tick(double deltaTime) override;
+        void tick() override;
 };

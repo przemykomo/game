@@ -6,9 +6,11 @@ class World;
 
 class Entity {
     public:
-        float x, y;
+        double lastX, lastY;
+        double x, y;
+        double motionX, motionY;
         const AxisAlignedBB aabb;
         std::weak_ptr<World> worldWeakPtr;
         Entity();
-        virtual void tick(double deltaTime);
+        virtual void tick();
 };

@@ -9,13 +9,10 @@
 class Game;
 
 class World : public std::enable_shared_from_this<World> {
-    private:
-        //std::shared_ptr<PlayerEntity> playerEntity;
     public:
         std::vector<std::shared_ptr<Entity>> entities;
         World();
-        void render(BatchRenderer& batchRenderer, Game& game);
-        //std::shared_ptr<PlayerEntity> getPlayer();
-        void tick(double deltaTime); //TODO: tick shouldn't be called every frame so it should calculate it's own deltaTime
+        void render(BatchRenderer& batchRenderer, Game& game, double partialTicks);
+        void tick();
         void addEntity(std::shared_ptr<Entity> entity);
 };

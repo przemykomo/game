@@ -11,5 +11,5 @@ class EntityRenderer {
     public:
         EntityRenderer(TextureAtlas& textureAtlas, const std::string& currentDirectory);
         EntityRenderer(SquareModel&& model);
-        void render(BatchRenderer& batchRenderer, std::shared_ptr<Entity> entity);
+        void render(BatchRenderer& batchRenderer, std::shared_ptr<Entity> entity, double partialTicks);
 };

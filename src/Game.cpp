@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Shaders.h"
 
+#include <GLFW/glfw3.h>
 #include <glbinding/gl/gl.h>
 #include <glbinding/glbinding.h>
 
@@ -57,6 +58,8 @@ void Game::loop() {
     double deltaTime = 1.0 / 60.0;
     double timeBegin = glfwGetTime();
 
+    double lastTickTime = -1.0;
+    constexpr double expectedTickTime = 1.0 / 20.0;
     while (!glfwWindowShouldClose(glfwWindow)) {
         // ---- CONTROLS ----
         glfwPollEvents();
@@ -78,14 +81,19 @@ void Game::loop() {
         // ---- END CONTROLS ----
 
         // ---- TICK ----
-        world->tick(deltaTime);
+        double now = glfwGetTime();
+        if (now >= lastTickTime + expectedTickTime) {
+            lastTickTime = now;
+            world->tick();
+        }
         // ---- END TICK ----
 
         // ---- RENDER ----
+        double partialTicks = (glfwGetTime() - lastTickTime) / expectedTickTime;
         glClear(GL_COLOR_BUFFER_BIT);
         batchRenderer.reset();               
 
-        world->render(batchRenderer, *this);
+        world->render(batchRenderer, *this, partialTicks);
 
         batchRenderer.flush();
         glfwSwapBuffers(glfwWindow);
