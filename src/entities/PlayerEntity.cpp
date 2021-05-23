@@ -4,6 +4,8 @@
 PlayerEntity::PlayerEntity() : Entity() {}
 
 void PlayerEntity::tick(double deltaTime) {
+    Entity::tick(deltaTime);
+
     moveRight = std::clamp(moveRight, -20.0f, 20.0f);
     moveUp = std::clamp(moveUp, -20.0f, 20.0f);
 

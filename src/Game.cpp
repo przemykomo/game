@@ -18,7 +18,7 @@ void Game::windowSizeCallback(GLFWwindow* window, int width, int height) {
     game->batchRenderer.updateWindowSize(width, height);
 }
 
-Game::Game(const std::string& currentDirectory) {
+Game::Game(const std::string& currentDirectory) : world(std::make_shared<World>()), playerEntity(std::make_shared<PlayerEntity>()) {
     glfwWindow = glfwCreateWindow(640, 480, "Game", NULL, NULL);
     glfwSetWindowUserPointer(glfwWindow, this);
     glfwMakeContextCurrent(glfwWindow);
@@ -48,6 +48,9 @@ Game::Game(const std::string& currentDirectory) {
 
     entityRenderers.emplace(std::make_pair(typeid(Entity).name(), std::make_shared<EntityRenderer>(textureAtlas, currentDirectory)));
     entityRenderers.emplace(std::make_pair(typeid(PlayerEntity).name(), std::make_shared<EntityRenderer>(SquareModel(textureAtlas.getTextureCoords(currentDirectory + "/a.png")))));
+
+    world->addEntity(std::make_shared<Entity>());
+    world->addEntity(playerEntity);
 }
 
 void Game::loop() {
@@ -57,7 +60,6 @@ void Game::loop() {
     while (!glfwWindowShouldClose(glfwWindow)) {
         // ---- CONTROLS ----
         glfwPollEvents();
-        std::shared_ptr<PlayerEntity> playerEntity = world.getPlayer();
         if (glfwGetKey(glfwWindow, GLFW_KEY_A)) {
             playerEntity->moveRight -= 0.4 * deltaTime;
         }
@@ -76,14 +78,14 @@ void Game::loop() {
         // ---- END CONTROLS ----
 
         // ---- TICK ----
-        world.tick(deltaTime);
+        world->tick(deltaTime);
         // ---- END TICK ----
 
         // ---- RENDER ----
         glClear(GL_COLOR_BUFFER_BIT);
         batchRenderer.reset();               
 
-        world.render(batchRenderer, *this);
+        world->render(batchRenderer, *this);
 
         batchRenderer.flush();
         glfwSwapBuffers(glfwWindow);

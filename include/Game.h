@@ -3,6 +3,7 @@
 #include "EntityRenderer.h"
 #include "TextureAtlas.h"
 #include "World.h"
+#include "entities/PlayerEntity.h"
 
 #include <memory>
 #include <string>
@@ -16,7 +17,8 @@ class Game {
         GLFWwindow* glfwWindow;
         TextureAtlas textureAtlas;
         BatchRenderer batchRenderer;
-        World world;
+        std::shared_ptr<World> world;
+        std::shared_ptr<PlayerEntity> playerEntity;
     public:
         std::unordered_map<std::string, std::shared_ptr<EntityRenderer>> entityRenderers;
         static void keyCallback(GLFWwindow* window, int key, int scanCode, int action, int mods);
