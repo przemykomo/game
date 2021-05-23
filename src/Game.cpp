@@ -6,14 +6,16 @@
 
 using namespace gl;
 
-void Game::keyCallback(GLFWwindow *window, int key, int scanCode, int action, int mods) {
+void Game::keyCallback(GLFWwindow* window, int key, int scanCode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
 }
 
-void Game::windowSizeCallback(GLFWwindow *window, int width, int height) {
+void Game::windowSizeCallback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+    Game* game = static_cast<Game*>(glfwGetWindowUserPointer(window));
+    game->batchRenderer.updateWindowSize(width, height);
 }
 
 Game::Game(const std::string& currentDirectory) {
@@ -29,6 +31,9 @@ Game::Game(const std::string& currentDirectory) {
 #endif
 
     batchRenderer.init(vertexShaderSource, fragmentShaderSource);
+    int width, height;
+    glfwGetWindowSize(glfwWindow, &width, &height);
+    batchRenderer.updateWindowSize(width, height);
 
     glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
 
@@ -54,19 +59,19 @@ void Game::loop() {
         glfwPollEvents();
         std::shared_ptr<PlayerEntity> playerEntity = world.getPlayer();
         if (glfwGetKey(glfwWindow, GLFW_KEY_A)) {
-            playerEntity->moveRight -= 0.2 * deltaTime;
+            playerEntity->moveRight -= 0.4 * deltaTime;
         }
 
         if (glfwGetKey(glfwWindow, GLFW_KEY_D)) {
-            playerEntity->moveRight += 0.2 * deltaTime;
+            playerEntity->moveRight += 0.4 * deltaTime;
         }
 
         if (glfwGetKey(glfwWindow, GLFW_KEY_S)) {
-            playerEntity->moveUp -= 0.2 * deltaTime;
+            playerEntity->moveUp -= 0.4 * deltaTime;
         }
 
         if (glfwGetKey(glfwWindow, GLFW_KEY_W)) {
-            playerEntity->moveUp += 0.2 * deltaTime;
+            playerEntity->moveUp += 0.4 * deltaTime;
         }
         // ---- END CONTROLS ----
 

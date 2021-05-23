@@ -1,6 +1,10 @@
 #include "BatchRenderer.h"
 #include <glbinding/gl/gl.h>
+#include <glm/detail/qualifier.hpp>
 #include <stdexcept>
+#include <glm/mat4x4.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace gl;
 
@@ -42,7 +46,6 @@ void BatchRenderer::init(const char* vertexShaderSource, const char* fragmentSha
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -99,4 +102,14 @@ void BatchRenderer::flush() {
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
     reset();
+}
+
+void BatchRenderer::updateWindowSize(int width, int height) {
+    float horizontal = static_cast<float>(width) / 100.0f;
+    float vertical = static_cast<float>(height) / 100.0f;
+
+    glm::mat4 projection = glm::ortho<float>(- horizontal, horizontal, -vertical, vertical, -1.0f, 1.0f);
+
+    glUseProgram(programID);
+    glUniformMatrix4fv(glGetUniformLocation(programID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 }

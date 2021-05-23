@@ -16,4 +16,5 @@ class BatchRenderer {
         void reset();
         void addModel(Vertex* modelVertices, int verticesSize, unsigned int* modelIndices, int modelIndicesSize);
         void flush();
+        void updateWindowSize(int width, int height);
 };
